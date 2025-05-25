@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>منصة كلية الإدارة | الرئيسية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --main-bg: #e0e7ff;
+        --main-bg-dark: #181f2a;
+        --main-card: #fff;
+        --main-card-dark: #232b3b;
+        --main-text: #222;
+        --main-text-dark: #f3f4f6;
+        --main-accent: #2563eb;
+        --main-accent2: #1e40af;
+        --dev-bar-h: 44px;
+      }
+      body {
+        font-family: 'Cairo', Arial, sans-serif;
+        margin: 0;
+        background: var(--main-bg);
+        color: var(--main-text);
+        min-height: 100vh;
+        transition: background 0.4s, color 0.4s;
+      }
+      body.dark {
+        background: var(--main-bg-dark);
+        color: var(--main-text-dark);
+      }
+      /* شريط المطور */
+      .dev-bar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: var(--dev-bar-h);
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        z-index: 2000;
+        box-shadow: 0 2px 12px #2563eb22;
+        padding: 0 14px;
+        border-radius: 0 0 14px 14px;
+        user-select: none;
+      }
+      body.dark .dev-bar {
+        background: linear-gradient(90deg, #fbbf24 60%, #f59e42 100%);
+        color: #232b3b;
+        box-shadow: 0 2px 12px #fbbf2444;
+      }
+      .dev-bar .dev-info {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.97rem;
+        font-weight: 700;
+        background: rgba(255,255,255,0.13);
+        color: inherit;
+        border-radius: 8px;
+        padding: 3px 13px 3px 10px;
+        border: 1px solid #fff3;
+        box-shadow: 0 1px 4px #0001;
+      }
+      .dev-bar .dev-svg {
+        width: 22px;
+        height: 22px;
+        margin-left: 3px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px #2563eb22;
+      }
+      .dev-bar .settings-btn {
+        background: linear-gradient(90deg, #fffbe7 60%, #fbbf24 100%);
+        color: #1e40af;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-right: 10px;
+        box-shadow: 0 2px 8px #fbbf2444;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        outline: none;
+      }
+      .dev-bar .settings-btn:hover {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: #fff;
+      }
+      body.dark .dev-bar .settings-btn {
+        background: linear-gradient(90deg, #232b3b 60%, #181f2a 100%);
+        color: #fbbf24;
+      }
+      .dev-bar-spacer { height: var(--dev-bar-h); }
+      /* القائمة الجانبية */
+      .side-nav {
+        position: fixed;
+        top: var(--dev-bar-h);
+        right: 0;
+        width: 210px;
+        height: calc(100vh - var(--dev-bar-h));
+        background: #fff;
+        border-left: 1px solid #e5e7eb;
+        box-shadow: -2px 0 12px #2563eb11;
+        z-index: 1200;
+        padding: 30px 0 0 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      body.dark .side-nav {
+        background: #232b3b;
+        border-left: 1px solid #374151;
+      }
+      .side-nav ul {
+        list-style: none;
+        padding: 0 0 0 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .side-nav ul li a {
+        display: block;
+        padding: 12px 28px 12px 10px;
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 0 18px 18px 0;
+        font-size: 1.08rem;
+        transition: background 0.2s, color 0.2s;
+      }
+      .side-nav ul li a.active,
+      .side-nav ul li a:hover {
+        background: linear-gradient(90deg, #2563eb11 60%, #1e40af11 100%);
+        color: #1e40af;
+      }
+      body.dark .side-nav ul li a {
+        color: #fbbf24;
+      }
+      body.dark .side-nav ul li a.active,
+      body.dark .side-nav ul li a:hover {
+        background: linear-gradient(90deg, #fbbf2422 60%, #f59e4222 100%);
+        color: #fffbe7;
+      }
+      /* محتوى الصفحة مع تعويض القائمة */
+      .main-content {
+        margin-right: 210px;
+        margin-top: var(--dev-bar-h);
+        transition: margin 0.3s;
+      }
+      @media (max-width: 900px) {
+        .side-nav { position: static; width: 100%; height: auto; flex-direction: row; padding: 0; border-left: none; box-shadow: none; }
+        .side-nav ul { flex-direction: row; justify-content: center; gap: 2px; }
+        .side-nav ul li a { border-radius: 0; padding: 10px 12px; font-size: 1rem; }
+        .main-content { margin-right: 0; }
+      }
+      /* إعدادات */
+      .settings-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 340px;
+        max-width: 95vw;
+        height: 100vh;
+        background: #fff;
+        color: #232b3b;
+        box-shadow: 2px 0 24px #2563eb22;
+        z-index: 3000;
+        transform: translateX(-110%);
+        transition: transform 0.35s cubic-bezier(.77,0,.18,1);
+        padding: 32px 22px 22px 22px;
+        border-radius: 0 18px 18px 0;
+        overflow-y: auto;
+      }
+      .settings-panel.open {
+        transform: translateX(0);
+      }
+      body.dark .settings-panel {
+        background: #232b3b;
+        color: #f3f4f6;
+        box-shadow: 2px 0 24px #fbbf2444;
+      }
+      .settings-panel h2 {
+        margin-top: 0;
+        color: #2563eb;
+        font-size: 1.3rem;
+        margin-bottom: 18px;
+        text-align: right;
+      }
+      body.dark .settings-panel h2 {
+        color: #fbbf24;
+      }
+      .settings-panel .close-panel-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: inherit;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      .settings-panel .close-panel-btn:hover {
+        color: #e74c3c;
+      }
+      .settings-panel .panel-section {
+        margin-bottom: 28px;
+      }
+      .settings-panel label {
+        font-weight: bold;
+        margin-bottom: 6px;
+        display: block;
+        color: #2563eb;
+      }
+      body.dark .settings-panel label {
+        color: #fbbf24;
+      }
+      .settings-panel input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #bfc9d9;
+        font-size: 1rem;
+        background: #f9fafb;
+        color: inherit;
+        margin-bottom: 10px;
+        margin-top: 2px;
+      }
+      body.dark .settings-panel input[type="password"] {
+        background: #181f2a;
+        border: 1px solid #374151;
+        color: #f3f4f6;
+      }
+      .settings-panel button, .settings-panel .theme-btn {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 10px 22px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-family: inherit;
+        font-weight: bold;
+        margin: 0 5px 0 0;
+        transition: background 0.2s;
+      }
+      .settings-panel button:hover, .settings-panel .theme-btn:hover {
+        background: #1e40af;
+      }
+      .settings-panel .theme-btn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fffbe7 60%, #fbbf24 100%);
+        color: #1e40af;
+        border: 1px solid #fbbf24;
+      }
+      body.dark .settings-panel .theme-btn {
+        background: linear-gradient(90deg, #232b3b 60%, #181f2a 100%);
+        color: #fbbf24;
+        border: 1px solid #fbbf24;
+      }
+      .settings-panel .error {
+        color: #e74c3c;
+        font-size: 0.98rem;
+        margin-bottom: 8px;
+        min-height: 18px;
+      }
+      .settings-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 64, 175, 0.18);
+        z-index: 2999;
+        transition: background 0.3s;
+      }
+      .settings-overlay.open {
+        display: block;
+      }
+      /* باقي التنسيقات */
+      header {
+        background: linear-gradient(90deg, var(--main-accent) 60%, var(--main-accent2) 100%);
+        color: white;
+        padding: 35px 0 25px 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+        position: relative;
+        overflow: visible;
+      }
+      header h1 {
+        font-size: 2.1rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 1px;
+      }
+      .hero {
+        background: linear-gradient(120deg, #3498db 60%, #2ecc71 100%);
+        color: white;
+        padding: 40px 20px 30px 20px;
+        text-align: center;
+        border-radius: 18px;
+        margin: 30px auto 0 auto;
+        max-width: 1100px;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.08);
+        position: relative;
+        overflow: visible;
+      }
+      body.dark .hero {
+        background: linear-gradient(120deg, #1e293b 60%, #2563eb 100%);
+        color: #f3f4f6;
+      }
+      .hero h2 {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+      }
+      .section {
+        max-width: 1100px;
+        margin: 35px auto 0 auto;
+        background: var(--main-card);
+        padding: 35px 25px;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        margin-bottom: 30px;
+        transition: background 0.4s;
+      }
+      body.dark .section {
+        background: var(--main-card-dark);
+      }
+      .section h2 {
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.2rem;
+      }
+      body.dark .section h2 {
+        color: #60a5fa;
+      }
+      .add-student-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+      .add-student-form input, .add-student-form select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #bfc9d9;
+        font-size: 1rem;
+        min-width: 160px;
+        outline: none;
+        transition: border 0.2s;
+        background: #f9fafb;
+        color: inherit;
+      }
+      body.dark .add-student-form input, body.dark .add-student-form select {
+        background: #232b3b;
+        border: 1px solid #374151;
+        color: #f3f4f6;
+      }
+      .add-student-form input:focus {
+        border: 1.5px solid #2563eb;
+      }
+      .add-student-form button {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-family: inherit;
+        font-weight: bold;
+        margin: 0 5px;
+        transition: background 0.2s;
+      }
+      .add-student-form button:hover {
+        background: #1e40af;
+      }
+      .semesters-inline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin-top: 4px;
+      }
+      .semesters-inline input[type="number"] {
+        width: 55px;
+        padding: 5px;
+        border-radius: 6px;
+        border: 1px solid #bfc9d9;
+        font-size: 0.98rem;
+        text-align: center;
+        background: #f1f5f9;
+        transition: border 0.2s;
+      }
+      body.dark .semesters-inline input[type="number"] {
+        background: #232b3b;
+        border: 1px solid #374151;
+        color: #f3f4f6;
+      }
+      .semesters-inline input[type="number"]:focus {
+        border: 1.5px solid #2563eb;
+        background: #fff;
+      }
+      .semesters-inline label {
+        font-size: 0.95rem;
+        color: #1e40af;
+        margin-left: 2px;
+      }
+      body.dark .semesters-inline label {
+        color: #60a5fa;
+      }
+      .semesters-inline .save-sem-btn {
+        background: #16a34a;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 5px 14px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: background 0.2s;
+      }
+      .semesters-inline .save-sem-btn:hover {
+        background: #166534;
+      }
+      .semesters-inline .cancel-sem-btn {
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        margin-right: 2px;
+        transition: background 0.2s;
+      }
+      .semesters-inline .cancel-sem-btn:hover {
+        background: #c0392b;
+      }
+      .stats {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .stat-box {
+        background-color: #e0e7ff;
+        padding: 22px 18px;
+        border-radius: 12px;
+        flex: 1 1 200px;
+        text-align: center;
+        min-width: 180px;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.04);
+      }
+      body.dark .stat-box {
+        background-color: #232b3b;
+        color: #f3f4f6;
+      }
+      .stat-box h3 {
+        color: #2980b9;
+        margin-bottom: 10px;
+        font-size: 1.15rem;
+      }
+      body.dark .stat-box h3 {
+        color: #60a5fa;
+      }
+      canvas {
+        max-width: 100%;
+        margin: auto;
+        display: block;
+      }
+      footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 18px 0;
+        margin-top: 40px;
+        border-radius: 0 0 18px 18px;
+        font-size: 1rem;
+      }
+      body.dark footer {
+        background: #181f2a;
+        color: #60a5fa;
+      }
+      @media (max-width: 900px) {
+        .main-content { margin-right: 0; }
+      }
+      @media (max-width: 600px) {
+        .hero h2 { font-size: 1.1rem; }
+        .section h2 { font-size: 1rem; }
+        .add-student-form input { min-width: 100px; }
+      }
+    </style>
+</head>
+<body>
+
+<!-- شريط المطور والإعدادات -->
+<div class="dev-bar">
+  <div class="dev-info">
+    <svg class="dev-svg" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" fill="#fbbf24" stroke="#2563eb" stroke-width="2"/>
+      <ellipse cx="16" cy="11" rx="10" ry="4" fill="#2563eb"/>
+      <ellipse cx="12" cy="17" rx="2" ry="2.5" fill="#222"/>
+      <ellipse cx="20" cy="17" rx="2" ry="2.5" fill="#222"/>
+      <path d="M12 22 Q16 26 20 22" stroke="#e67e22" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span>أحمد السريحي</span>
+  </div>
+  <button class="settings-btn" id="openSettingsBtn" title="الإعدادات">
+    <span>⚙️</span>
+  </button>
+</div>
+<div class="dev-bar-spacer"></div>
+
+<!-- القائمة الجانبية -->
+<nav class="side-nav">
+  <ul>
+    <li><a href="index.html" class="active">الرئيسية</a></li>
+    <li><a href="STUDENTS.HTML">الطلاب</a></li>
+    <li><a href="analytics.html">التحليلات</a></li>
+    <li><a href="reports.html">التقارير</a></li>
+    <li><a href="comparison.html">مقارنة التخصصات</a></li>
+  </ul>
+</nav>
+
+<!-- محتوى الصفحة -->
+<div class="main-content">
+  <header>
+    <h1>منصة كلية الإدارة</h1>
+    <div style="font-size:1.1rem; margin-top:8px;">مرحباً بكم في بوابة التحليل الأكاديمي والإحصائي</div>
+  </header>
+
+  <section class="hero">
+    <h2>تحليل الأداء الأكاديمي</h2>
+    <p>استعرض أداء الطلاب، قارن بين التخصصات، واطلع على تقارير النجاح والتفوق في كلية الإدارة.</p>
+  </section>
+
+  <section class="section">
+    <h2>إضافة طالب جديد أو تعديل طالب</h2>
+    <form class="add-student-form" id="addStudentForm">
+      <input type="text" id="studentName" placeholder="اسم الطالب" required>
+      <input type="text" id="studentMajor" placeholder="التخصص" required>
+      <input type="number" step="0.01" id="studentGPA" placeholder="المعدل النهائي" required>
+      <div class="semesters-inline" id="semestersInlineInputs"></div>
+      <button type="submit" id="addBtn">إضافة</button>
+      <button type="button" id="editBtn" class="hidden">تعديل</button>
+      <button type="button" id="cancelEditBtn" class="hidden cancel-btn">إلغاء</button>
+    </form>
+  </section>
+
+  <section class="section">
+    <h2>الإحصائيات العامة</h2>
+    <div class="stats" id="statsSection"></div>
+  </section>
+
+  <section class="section">
+    <h2>معدلات الطلاب حسب التخصص</h2>
+    <canvas id="departmentChart"></canvas>
+  </section>
+
+  <section class="section">
+    <h2>نسبة النجاح والرسوب</h2>
+    <canvas id="passFailChart"></canvas>
+  </section>
+
+  <section class="section" style="text-align:center;">
+    <h2>تقرير المعدلات الفصلية</h2>
+    <a href="report1.html" class="btn-more">عرض تقرير المعدلات الفصلية</a>
+  </section>
+
+  <footer>
+    &copy; 2025 منصة كلية الإدارة - جميع الحقوق محفوظة
+  </footer>
+</div>
+
+<!-- خلفية شفافة عند فتح الإعدادات -->
+<div class="settings-overlay" id="settingsOverlay"></div>
+
+<!-- لوحة الإعدادات الجانبية -->
+<div class="settings-panel" id="settingsPanel" tabindex="-1">
+  <button class="close-panel-btn" id="closeSettingsBtn" title="إغلاق">×</button>
+  <h2>الإعدادات</h2>
+  <div class="panel-section">
+    <button class="theme-btn" id="themeToggleBtn">
+      <span class="icon" id="themeIcon">🌙</span>
+      <span id="themeText">وضع ليلي</span>
+    </button>
+  </div>
+  <div class="panel-section">
+    <label>إعدادات كلمة المرور</label>
+    <div class="error" id="setPassError"></div>
+    <input type="password" id="newPassword" placeholder="أدخل كلمة المرور الجديدة" autocomplete="off" />
+    <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" autocomplete="off" />
+    <button onclick="saveNewPassword()">حفظ</button>
+    <button onclick="removeSavedPassword()" style="background:#e74c3c; margin-right:8px;">حذف كلمة المرور</button>
+  </div>
+  <div class="panel-section">
+    <a href="/settings-panel.html" target="_blank" style="color:#2563eb; font-weight:bold; text-decoration:none;">
+      إعدادات متقدمة <span style="font-size:1.2em;">↗</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  // --- الوضع الليلي/النهاري ---
+  const themeBtn = document.getElementById('themeToggleBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+  function setTheme(mode) {
+    if (mode === 'dark') {
+      document.body.classList.add('dark');
+      themeBtn.classList.add('night');
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'وضع نهاري';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark');
+      themeBtn.classList.remove('night');
+      themeIcon.textContent = '🌙';
+      themeText.textContent = 'وضع ليلي';
+      localStorage.setItem('theme', 'light');
+    }
+  }
+  themeBtn.onclick = function() {
+    setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+  };
+  window.addEventListener('DOMContentLoaded', function() {
+    setTheme(localStorage.getItem('theme') || 'light');
+    renderStats();
+    renderCharts();
+    renderSemestersInline();
+  });
+
+  // --- إعدادات لوحة الإعدادات الجانبية ---
+  const openSettingsBtn = document.getElementById('openSettingsBtn');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const settingsOverlay = document.getElementById('settingsOverlay');
+
+  openSettingsBtn.onclick = function() {
+    settingsPanel.classList.add('open');
+    settingsOverlay.classList.add('open');
+    setTimeout(() => settingsPanel.focus(), 200);
+  };
+  closeSettingsBtn.onclick = function() {
+    settingsPanel.classList.remove('open');
+    settingsOverlay.classList.remove('open');
+  };
+  settingsOverlay.onclick = closeSettingsBtn.onclick;
+  document.addEventListener('keydown', function(e) {
+    if (settingsPanel.classList.contains('open') && e.key === 'Escape') closeSettingsBtn.onclick();
+  });
+
+  // --- نظام كلمة المرور ---
+  function getSavedPassword() {
+    return localStorage.getItem('platformPassword') || null;
+  }
+  function setSavedPassword(pass) {
+    localStorage.setItem('platformPassword', pass);
+  }
+  function removeSavedPassword() {
+    localStorage.removeItem('platformPassword');
+    document.getElementById('setPassError').textContent = "تم حذف كلمة المرور!";
+    setTimeout(() => { document.getElementById('setPassError').textContent = ""; }, 1200);
+  }
+  function saveNewPassword() {
+    const pass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const error = document.getElementById('setPassError');
+    if (!pass || pass.length < 3) {
+      error.textContent = "يجب إدخال كلمة مرور من 3 أحرف أو أكثر.";
+      return;
+    }
+    if (pass !== confirm) {
+      error.textContent = "كلمتا المرور غير متطابقتين.";
+      return;
+    }
+    setSavedPassword(pass);
+    error.textContent = "تم حفظ كلمة المرور بنجاح!";
+    setTimeout(() => { error.textContent = ""; }, 1200);
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+  }
+
+  // --- نظام الطلاب: إضافة وتعديل فقط مع دعم الفصول ---
+  function getStudents() {
+    return JSON.parse(localStorage.getItem('studentsData') || '[]');
+  }
+  function setStudents(data) {
+    localStorage.setItem('studentsData', JSON.stringify(data));
+  }
+
+  let editIndex = null;
+
+  // إنشاء مدخلات الفصول بشكل أفقي
+  function renderSemestersInline(semesters = []) {
+    const container = document.getElementById('semestersInlineInputs');
+    let html = '';
+    for (let i = 0; i < 8; i++) {
+      html += `<label>ف${i+1}</label>
+        <input type="number" min="0" max="100" step="0.01" id="semInline${i}" value="${semesters[i] !== undefined && semesters[i] !== '' ? semesters[i] : ''}" />`;
+    }
+    html += `<button type="button" class="save-sem-btn" onclick="saveSemestersInline()">حساب المعدل</button>
+             <button type="button" class="cancel-sem-btn" onclick="clearSemestersInline()">مسح</button>`;
+    container.innerHTML = html;
+  }
+
+  // عند الضغط على "حساب المعدل" يتم حساب المعدل النهائي تلقائياً
+  function saveSemestersInline() {
+    let sum = 0, count = 0;
+    let semesters = [];
+    for (let i = 0; i < 8; i++) {
+      const val = parseFloat(document.getElementById('semInline'+i).value);
+      if (!isNaN(val)) {
+        sum += val;
+        count++;
+        semesters[i] = val;
+      } else {
+        semesters[i] = '';
+      }
+    }
+    const avg = count ? (sum / count).toFixed(2) : '';
+    if (avg) document.getElementById('studentGPA').value = avg;
+    if (editIndex !== null) {
+      const students = getStudents();
+      students[editIndex].semesters = semesters;
+      students[editIndex].gpa = avg ? parseFloat(avg) : students[editIndex].gpa;
+      setStudents(students);
+    }
+  }
+  function clearSemestersInline() {
+    for (let i = 0; i < 8; i++) document.getElementById('semInline'+i).value = '';
+    document.getElementById('studentGPA').value = '';
+  }
+
+  document.getElementById('addStudentForm').onsubmit = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('studentName').value.trim();
+    const major = document.getElementById('studentMajor').value.trim();
+    const gpa = parseFloat(document.getElementById('studentGPA').value);
+    let semesters = [];
+    for (let i = 0; i < 8; i++) {
+      const val = parseFloat(document.getElementById('semInline'+i).value);
+      semesters[i] = !isNaN(val) ? val : '';
+    }
+    if (!name || !major || isNaN(gpa)) return;
+    const students = getStudents();
+    if (editIndex === null) {
+      students.push({ name, major, gpa, semesters });
+    } else {
+      students[editIndex] = { name, major, gpa, semesters };
+      editIndex = null;
+      toggleEditMode(false);
+    }
+    setStudents(students);
+    this.reset();
+    renderStats();
+    renderCharts();
+    renderSemestersInline();
+  };
+
+  document.getElementById('editBtn').onclick = function() {
+    const name = document.getElementById('studentName').value.trim();
+    const students = getStudents();
+    const idx = students.findIndex(s => s.name === name);
+    if (idx === -1) {
+      alert('الطالب غير موجود. أدخل الاسم الصحيح أو أضف الطالب أولاً.');
+      return;
+    }
+    students[idx] = {
+      name: document.getElementById('studentName').value.trim(),
+      major: document.getElementById('studentMajor').value.trim(),
+      gpa: parseFloat(document.getElementById('studentGPA').value),
+      semesters: Array.from({length:8}, (_,i)=>parseFloat(document.getElementById('semInline'+i).value)||'')
+    };
+    setStudents(students);
+    editIndex = null;
+    toggleEditMode(false);
+    document.getElementById('addStudentForm').reset();
+    renderStats();
+    renderCharts();
+    renderSemestersInline();
+  };
+
+  document.getElementById('cancelEditBtn').onclick = function() {
+    editIndex = null;
+    toggleEditMode(false);
+    document.getElementById('addStudentForm').reset();
+    renderSemestersInline();
+  };
+
+  document.getElementById('studentName').addEventListener('blur', function() {
+    const name = this.value.trim();
+    const students = getStudents();
+    const idx = students.findIndex(s => s.name === name);
+    if (idx !== -1) {
+      document.getElementById('studentMajor').value = students[idx].major;
+      document.getElementById('studentGPA').value = students[idx].gpa;
+      renderSemestersInline(students[idx].semesters || []);
+      editIndex = idx;
+      toggleEditMode(true);
+    } else {
+      editIndex = null;
+      toggleEditMode(false);
+      document.getElementById('studentMajor').value = '';
+      document.getElementById('studentGPA').value = '';
+      renderSemestersInline();
+    }
+  });
+
+  function toggleEditMode(isEdit) {
+    document.getElementById('addBtn').classList.toggle('hidden', isEdit);
+    document.getElementById('editBtn').classList.toggle('hidden', !isEdit);
+    document.getElementById('cancelEditBtn').classList.toggle('hidden', !isEdit);
+  }
+
+  function renderStats() {
+    const students = getStudents();
+    const count = students.length;
+    const success = students.filter(s => s.gpa >= 50).length;
+    const fail = count - success;
+    const maxGpa = students.length ? Math.max(...students.map(s => s.gpa)) : 0;
+    const minGpa = students.length ? Math.min(...students.map(s => s.gpa)) : 0;
+    const avgSuccess = count ? Math.round((success / count) * 100) : 0;
+    document.getElementById('statsSection').innerHTML = `
+      <div class="stat-box"><h3>عدد الطلاب</h3><p>${count}</p></div>
+      <div class="stat-box"><h3>معدل النجاح</h3><p>${avgSuccess}%</p></div>
+      <div class="stat-box"><h3>أعلى معدل</h3><p>${maxGpa}</p></div>
+      <div class="stat-box"><h3>أقل معدل</h3><p>${minGpa}</p></div>
+    `;
+  }
+
+  let departmentChart, passFailChart;
+  function renderCharts() {
+    const students = getStudents();
+    const majors = {};
+    students.forEach(s => {
+      if (!majors[s.major]) majors[s.major] = [];
+      majors[s.major].push(s.gpa);
+    });
+    const labels = Object.keys(majors);
+    const data = labels.map(m => majors[m].reduce((a,b)=>a+b,0)/majors[m].length);
+
+    const ctx1 = document.getElementById('departmentChart').getContext('2d');
+    if (departmentChart) departmentChart.destroy();
+    departmentChart = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['لا يوجد بيانات'],
+        datasets: [{
+          label: 'متوسط المعدل',
+          data: data.length ? data : [0],
+          backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    const count = students.length;
+    const success = students.filter(s => s.gpa >= 50).length;
+    const fail = count - success;
+    const ctx2 = document.getElementById('passFailChart').getContext('2d');
+    if (passFailChart) passFailChart.destroy();
+    passFailChart = new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ['ناجح', 'راسب'],
+        datasets: [{
+          data: count ? [success, fail] : [0, 0],
+          backgroundColor: ['#2ecc71', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: 'bottom' }
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
